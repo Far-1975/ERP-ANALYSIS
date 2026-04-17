@@ -3,13 +3,15 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: ERP Integration Research Analyst API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: erp
+    description: ERP research operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,59 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /erp/analyze:
+    post:
+      operationId: analyzeErp
+      tags: [erp]
+      summary: Analyze ERP integration
+      description: Starts multi-level research on an ERP system and returns structured integration data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErpAnalyzeRequest"
+      responses:
+        "200":
+          description: Analysis complete
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErpAnalyzeResponse"
+        "400":
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+        "500":
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /erp/stream:
+    post:
+      operationId: streamErpAnalysis
+      tags: [erp]
+      summary: Stream ERP analysis logs
+      description: Streams real-time analysis progress via Server-Sent Events
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ErpAnalyzeRequest"
+      responses:
+        "200":
+          description: SSE stream of analysis logs and final result
+          content:
+            text/event-stream:
+              schema:
+                type: string
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +89,179 @@ components:
       required:
         - status
 
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    ErpAnalyzeRequest:
+      type: object
+      properties:
+        erpName:
+          type: string
+        subscriptionAvailable:
+          type: string
+          enum: [yes, no]
+        businessIntegrationType:
+          type: string
+          enum: [SCM, FS]
+        parentWebsite:
+          type: string
+        username:
+          type: ["string", "null"]
+        password:
+          type: ["string", "null"]
+        prompt:
+          type: string
+      required:
+        - erpName
+        - subscriptionAvailable
+        - businessIntegrationType
+        - parentWebsite
+        - prompt
+
+    ApiEndpoint:
+      type: object
+      properties:
+        name:
+          type: string
+        method:
+          type: string
+        endpoint:
+          type: string
+        description:
+          type: string
+        headers:
+          type: object
+          additionalProperties:
+            type: string
+        params:
+          type: object
+          additionalProperties:
+            type: string
+        requestBody:
+          type: object
+          additionalProperties: true
+        response:
+          type: object
+          additionalProperties: true
+        auth:
+          type: string
+        curlExample:
+          type: string
+        jsExample:
+          type: string
+        pythonExample:
+          type: string
+        statusCode:
+          type: string
+        errorExample:
+          type: object
+          additionalProperties: true
+      required:
+        - name
+        - method
+        - endpoint
+        - description
+
+    AuthMethod:
+      type: object
+      properties:
+        type:
+          type: string
+        description:
+          type: string
+        tokenUrl:
+          type: ["string", "null"]
+        steps:
+          type: array
+          items:
+            type: string
+        example:
+          type: string
+      required:
+        - type
+        - description
+
+    Webhook:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        events:
+          type: array
+          items:
+            type: string
+        payloadSample:
+          type: object
+          additionalProperties: true
+        available:
+          type: boolean
+      required:
+        - name
+        - description
+        - available
+
+    DeploymentStep:
+      type: object
+      properties:
+        step:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+        config:
+          type: ["string", "null"]
+      required:
+        - step
+        - title
+        - description
+
+    ErpAnalyzeResponse:
+      type: object
+      properties:
+        erp:
+          type: string
+        lastUpdated:
+          type: string
+        integrationTypes:
+          type: array
+          items:
+            type: string
+        apis:
+          type: array
+          items:
+            $ref: "#/components/schemas/ApiEndpoint"
+        auth:
+          type: array
+          items:
+            $ref: "#/components/schemas/AuthMethod"
+        webhooks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Webhook"
+        deploymentSteps:
+          type: array
+          items:
+            $ref: "#/components/schemas/DeploymentStep"
+        customizationInfo:
+          type: object
+          additionalProperties: true
+        sources:
+          type: array
+          items:
+            type: string
+      required:
+        - erp
+        - lastUpdated
+        - integrationTypes
+        - apis
+        - auth
+        - webhooks
+        - deploymentSteps

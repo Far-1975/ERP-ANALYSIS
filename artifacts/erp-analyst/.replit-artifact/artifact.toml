@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "ERP Integration Research Analyst"
+version = "1.0.0"
+id = "artifacts/erp-analyst"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23695
+
+[services.development]
+run = "pnpm --filter @workspace/erp-analyst run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/erp-analyst", "run", "build" ]
+publicDir = "artifacts/erp-analyst/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23695"
+BASE_PATH = "/"

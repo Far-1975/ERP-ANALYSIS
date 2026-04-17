@@ -1,0 +1,374 @@
+You are a senior full-stack AI engineer and enterprise UI/UX architect.
+
+Build a production-grade application:
+
+# "ERP Integration Research Analyst"
+
+---
+
+# 🎯 OBJECTIVE
+
+Create an intelligent system that:
+
+* Accepts ERP-related input from UI
+* Performs multi-level research on public documentation
+* Extracts APIs, authentication, webhooks, and integration flows
+* Displays results in an interactive enterprise dashboard
+
+---
+
+# 🖥️ UI REQUIREMENTS (STRICT — FOLLOW EXACTLY)
+
+## 🔷 LEFT PANEL (INPUT FORM)
+
+Fields:
+
+1. ERP Name (text input)
+
+2. Subscription Available (radio)
+
+   * Yes
+   * No
+
+3. Business Integration Type (dropdown)
+
+   * SCM
+   * FS
+
+4. Parent Website to Search (text input)
+
+5. Credentials
+
+   * Username
+   * Password
+
+6. Prompt (large textarea)
+
+7. Button → "Generate"
+
+---
+
+## 🔷 RIGHT PANEL (OUTPUT DASHBOARD)
+
+Must display:
+
+* Integration Report Header
+* ERP Name (large)
+* Last Updated Date
+* Download PDF Button
+* Badges:
+
+  * REST
+  * SOAP
+  * GraphQL / SuiteQL
+
+---
+
+# 🔷 NAVIGATION TABS (MANDATORY)
+
+Tabs:
+
+* Overview
+* APIs
+* Authentication
+* Webhooks
+* Customization
+* Deployment
+
+👉 Tabs must:
+
+* Switch dynamically (NO page reload)
+* Render data from backend
+
+---
+
+# 🔷 OVERVIEW TAB
+
+Show clickable summary cards:
+
+* API Endpoints Count
+* Auth Methods Count
+* Webhooks Availability
+* Integration Types
+
+👉 Clicking a card navigates to the respective tab
+
+---
+
+# 🔷 APIs TAB (IMPORTANT)
+
+Display:
+
+* API endpoints list
+* Method (GET/POST/etc.)
+* Description
+
+👉 Each API must be:
+
+* Clickable
+* Opens a modal with full details
+
+---
+
+# 🔥 API MODAL (CRITICAL FEATURE)
+
+When user clicks an API:
+
+Open modal popup with:
+
+## HEADER
+
+* API Name
+* Method Badge
+* Close button
+
+## REQUEST SECTION
+
+* Endpoint URL
+* Method
+* Headers
+* Query Params
+* Request Body (JSON)
+* Copy button
+
+## RESPONSE SECTION
+
+* Status Code
+* Response JSON
+* Error Example
+
+## AUTH SECTION
+
+* Auth type
+* Token usage example
+
+## CODE SECTION
+
+* cURL example
+* JS fetch example
+* Python request example
+
+---
+
+## MODAL BEHAVIOR
+
+* Opens dynamically
+* Close on:
+
+  * ESC key
+  * Outside click
+* Scrollable
+* Syntax highlighting
+* Smooth animation
+
+---
+
+# 🔷 AUTHENTICATION TAB
+
+Display:
+
+* OAuth2 / API Key / Basic Auth
+* Token URLs
+* Steps
+
+---
+
+# 🔷 WEBHOOKS TAB
+
+Display:
+
+* Availability
+* Events
+* Payload samples
+
+---
+
+# 🔷 CUSTOMIZATION TAB
+
+Display:
+
+* Integration types (REST / SOAP / GraphQL)
+* Extension capabilities
+
+---
+
+# 🔷 DEPLOYMENT TAB
+
+Display:
+
+* Step-by-step integration flow
+* Config requirements
+
+---
+
+# 🎨 DESIGN (OPENTEXT STYLE)
+
+* Background: #0B1F33
+* Primary: #0A3A5A
+* Gradient: #0F4C81 → #1B6CA8
+* Cards: Glassmorphism
+* Rounded corners
+* Smooth animations
+
+---
+
+# 🧠 AGENT ARCHITECTURE
+
+Single orchestrator controlling:
+
+1. Planning Agent
+2. Multi-Level Research Agent
+3. Reasoning Agent
+4. Validation Agent
+
+---
+
+# 🔍 MULTI-LEVEL SEARCH ENGINE (MANDATORY)
+
+## LEVEL 1: Targeted Search
+
+* Query:
+  "<ERP> API docs"
+  "<ERP> developer portal"
+* Select trusted URLs
+
+## LEVEL 2: Domain Filtering
+
+* Keep only official sources
+
+## LEVEL 3: Deep Crawling
+
+* Follow links:
+  api, auth, webhook, reference
+* Depth limit: 2–3
+
+## LEVEL 4: Content Extraction
+
+Extract:
+
+* APIs
+* Auth methods
+* Webhooks
+
+## LEVEL 5: Cleaning & Deduplication
+
+* Remove duplicates
+* Normalize endpoints
+
+## LEVEL 6: LLM Reasoning
+
+* Summarize
+* Generate integration flow
+
+🚫 DO NOT use embeddings or vector DB
+
+---
+
+# 🔁 FLOW
+
+1. User clicks Generate
+2. Backend starts orchestration
+3. Execute:
+   Planning → Research → Reasoning → Validation
+4. Stream logs to UI
+5. Render final dashboard
+
+---
+
+# 📦 BACKEND OUTPUT FORMAT
+
+Return structured JSON:
+
+{
+"erp": "",
+"apis": [
+{
+"name": "",
+"method": "",
+"endpoint": "",
+"headers": {},
+"params": {},
+"request_body": {},
+"response": {},
+"auth": ""
+}
+],
+"auth": [],
+"webhooks": [],
+"integration_types": [],
+"deployment_steps": []
+}
+
+---
+
+# ⚙️ TECH STACK
+
+Frontend:
+
+* React
+* Tailwind CSS
+
+Backend:
+
+* Flask
+
+Scraping:
+
+* requests
+* BeautifulSoup
+
+---
+
+# 📂 PROJECT STRUCTURE
+
+/backend
+app.py
+agents/
+orchestrator.py
+planning.py
+research.py
+reasoning.py
+validation.py
+
+/frontend
+src/
+components/
+Form.jsx
+Dashboard.jsx
+Tabs.jsx
+ApiModal.jsx
+
+---
+
+# 🔥 ADVANCED FEATURES
+
+* Real-time logs
+* Clickable cards
+* Tab navigation
+* API modal (Postman-style)
+* Download PDF
+* Error handling
+
+---
+
+# 🚫 STRICT RULES
+
+* No embeddings
+* No vector DB
+* No static UI
+* Must be interactive
+* Must follow UI exactly
+
+---
+
+# ✅ FINAL EXPECTATION
+
+* Fully working enterprise dashboard
+* Accurate ERP API extraction
+* Multi-level intelligent crawling
+* Interactive UI with modal drill-down
+* Production-quality code
+
+---
+
+Build the complete system now.
