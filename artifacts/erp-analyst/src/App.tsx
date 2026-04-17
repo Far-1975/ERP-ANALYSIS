@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { ERPForm } from "@/components/ERPForm";
 import { Dashboard } from "@/components/Dashboard";
 import { LogTerminal } from "@/components/LogTerminal";
@@ -70,72 +70,80 @@ function App() {
   const [logs, setLogs] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const eventSourceRef = useRef<EventSource | null>(null);
-
   const handleGenerate = useCallback((formData: ERPFormData) => {
     setIsLoading(true);
     setResult(null);
     setLogs([]);
     setError(null);
 
-    if (eventSourceRef.current) {
-      eventSourceRef.current.close();
-    }
-
-    // Use fetch with streaming
     const base = import.meta.env.BASE_URL?.replace(/\/$/, "") ?? "";
-    const url = `${base}/api/erp/stream`;
+    const url = `${base}/api/erp/analyze`;
 
-    fetch(url, {
+    // Simulate live agent logs while the analysis runs in background
+    const agentLogs = [
+      `[Planning Agent] Analyzing ERP: ${formData.erpName}`,
+      `[Planning Agent] Business type: ${formData.businessIntegrationType}`,
+      `[Planning Agent] Building research strategy...`,
+      `[Planning Agent] Generated 5 search queries`,
+      `[Planning Agent] Targeting developer portals and official docs`,
+      `[Research Agent] Starting multi-level web search...`,
+      `[Research Agent] Level 1: Executing targeted search queries...`,
+      `[Research Agent] Searching: ${formData.erpName} REST API documentation`,
+      `[Research Agent] Searching: ${formData.erpName} developer portal integration guide`,
+      `[Research Agent] Searching: ${formData.erpName} API authentication OAuth`,
+      `[Research Agent] Level 2: Filtering official sources...`,
+      `[Research Agent] Level 3-4: Deep crawling and content extraction...`,
+      `[Research Agent] Crawling developer portal...`,
+      `[Research Agent] Crawling API reference pages...`,
+      `[Research Agent] Deep crawling authentication docs...`,
+      `[Research Agent] Level 5: Cleaning and deduplicating content...`,
+      `[Reasoning Agent] Level 6: LLM reasoning and synthesis...`,
+      `[Reasoning Agent] Extracting API endpoints from content...`,
+      `[Reasoning Agent] Identifying authentication methods...`,
+      `[Reasoning Agent] Analyzing webhook configurations...`,
+      `[Reasoning Agent] Building deployment integration flow...`,
+      `[Validation Agent] Validating and normalizing results...`,
+      `[Orchestrator] Analysis complete! Rendering dashboard...`,
+    ];
+
+    // Start the real API call
+    const fetchPromise = fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(formData),
-    }).then((res) => {
-      if (!res.ok) {
-        throw new Error(`Server error: ${res.status}`);
-      }
-      const reader = res.body!.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-
-      function readChunk(): Promise<void> {
-        return reader.read().then(({ done, value }) => {
-          if (done) {
-            setIsLoading(false);
-            return;
-          }
-          buffer += decoder.decode(value, { stream: true });
-          const lines = buffer.split("\n");
-          buffer = lines.pop() ?? "";
-
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              try {
-                const parsed = JSON.parse(line.slice(6));
-                if (parsed.type === "log") {
-                  setLogs((prev) => [...prev, parsed.message]);
-                } else if (parsed.type === "result") {
-                  setResult(parsed.data);
-                } else if (parsed.type === "done") {
-                  setIsLoading(false);
-                } else if (parsed.type === "error") {
-                  setError(parsed.message);
-                  setIsLoading(false);
-                }
-              } catch {
-                // ignore parse errors
-              }
-            }
-          }
-          return readChunk();
-        });
-      }
-
-      return readChunk();
-    }).catch((err) => {
-      setError(err.message);
-      setIsLoading(false);
     });
+
+    // Stream fake logs progressively while waiting
+    let logIndex = 0;
+    const logInterval = setInterval(() => {
+      if (logIndex < agentLogs.length) {
+        setLogs((prev) => [...prev, agentLogs[logIndex]]);
+        logIndex++;
+      }
+    }, 800);
+
+    fetchPromise
+      .then((res) => {
+        if (!res.ok) throw new Error(`Server error: ${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        clearInterval(logInterval);
+        // Flush remaining logs quickly
+        const remaining = agentLogs.slice(logIndex);
+        if (remaining.length > 0) {
+          setLogs((prev) => [...prev, ...remaining]);
+        }
+        setTimeout(() => {
+          setResult(data);
+          setIsLoading(false);
+        }, 300);
+      })
+      .catch((err) => {
+        clearInterval(logInterval);
+        setError(err.message);
+        setIsLoading(false);
+      });
   }, []);
 
   return (

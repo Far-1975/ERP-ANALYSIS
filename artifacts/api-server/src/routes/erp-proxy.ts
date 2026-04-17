@@ -21,8 +21,12 @@ function proxyToFlask(req: Request, res: Response): void {
     },
   };
 
-  // For SSE streaming
-  if (req.headers.accept === "text/event-stream") {
+  // For SSE streaming — detect by Accept header OR by /stream path
+  const isSSE =
+    req.headers.accept === "text/event-stream" ||
+    req.path.includes("/stream");
+
+  if (isSSE) {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
     res.setHeader("X-Accel-Buffering", "no");
